@@ -95,7 +95,7 @@ for ts, ep in eps.items():
                     word = word[-len(suffix):]
 
             if word and len(word) > 3:
-                references[word].add(f"./episodes/{ts}/index.html")
+                references[word].add(f"./episodes/{ts}")
 
     episode += """
 </table>
@@ -142,12 +142,29 @@ def build_table(html, counts):
     html += "</table>"
     return html
 
-search = header + """<div style="display: flex">"""
+
 alphabetical = sorted(references.items(), key=lambda kv: kv[0])
-search = build_table(search, alphabetical)
+
+# merge words with same prefix
+merged = defaultdict(set)
+prev_word = alphabetical[0][0]
+for word, locs in alphabetical:
+    for postfix in ["s", "d", "ly", "ally", "n"]:
+        if word == prev_word + postfix:
+            word = prev_word
+            break
+    else:
+        prev_word = word
+    merged[word].update(locs)
+alphabetical = merged.items()
+
 by_counts = sorted(alphabetical, key=lambda kv: -len(kv[1]))
+
+search = header + """<div style="display: flex">"""
+search = build_table(search, alphabetical)
 search = build_table(search, by_counts)
 search += "</div>"
+
 
 with open("./index2.html", "w") as f:
     f.write(search)
