@@ -5,7 +5,7 @@ import unicodedata
 from collections import defaultdict
 
 
-eps = json.load(open("entitled-opinions.json", "r"))
+eps = json.load(open("opinions.json", "r"))
 
 references = defaultdict(set)
 ignored_words = open("10000-most-common-words.txt", "r").read().split("\n")
@@ -31,7 +31,7 @@ toc = header + """
 <p>
     <a href="https://entitled-opinions.com/">Entitled Opinions</a>
     <br>hosted by Robert Pogue Harrison
-    <br>transcripts by <a href="https://reduct.video">Reduct</a>
+    <br>archive by <a href="https://reduct.video">Reduct</a>
 </p>
 
 <table>
@@ -63,11 +63,12 @@ for ts, ep in eps.items():
 <div style="width: 600px">
     <p>{ep['date']}</p>
     <p>{ep['title']}</p>
+    <p><img style="width: 600px" src="{ep['image']}"></img></p>
     <p>{ep['description']}</p>
 </div>
 
 <div>
-<a href="./transcript-tiny.vtt">download transcript [vtt]</a>
+    <a href="./transcript-tiny.vtt">download transcript [vtt]</a>
 </div>
 
 <div>
@@ -119,8 +120,8 @@ toc += """
 <br/>
 
 <div><a href="./index2.html">transcript index</a></div>
-<div><a href="./entitled-opinions.json">episode metadata</a></div>
-<div><a href="./entitled-opinions.xml">podcast xml</a></div>
+<div><a href="./opinions.json">episode metadata</a></div>
+<div><a href="./opinions.xml">podcast xml</a></div>
 <div><a href="https://github.com/tobyshooters/entitled-opinions">how it's made</a></div>
 """
 

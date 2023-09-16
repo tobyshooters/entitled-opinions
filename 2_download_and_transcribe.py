@@ -5,15 +5,16 @@ import requests
 import unicodedata
 
 wcpp = "../whisper.cpp"
-model = "medium"
-weights = "ggml-tiny.en.bin"
+model = "tiny"
+weights = "ggml-{model}.en.bin"
 
 def run(p):
     subprocess.run(p.split(" "))
 
 
-eps = json.load(open("entitled-opinions.json", "r"))
+eps = json.load(open("opinions.json", "r"))
 for ts, ep in eps.items():
+
     t = unicodedata.normalize("NFKD", ep["title"])
 
     txf = f"./episodes/{ts}/transcript-{model}"
