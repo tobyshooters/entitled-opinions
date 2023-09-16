@@ -4,21 +4,20 @@ import json
 import unicodedata
 from collections import defaultdict
 
+
 eps = json.load(open("entitled-opinions.json", "r"))
 
 references = defaultdict(set)
 ignored_words = open("10000-most-common-words.txt", "r").read().split("\n")
 
 header = """
-<head><meta charset="UTF-8"></head>
+<head>
+    <meta charset="UTF-8">
+</head>
+
 <style> 
-    @font-face {
-        font-family: "Input Sans";
-        src: url(./InputSansNarrow-Regular.ttf);
-    }
     body {
         margin: 22px;
-        font-family: "Input Sans";
     } 
     th, td {
         padding-right: 11px;
@@ -30,9 +29,9 @@ header = """
 
 toc = header + """
 <p>
-<a href="https://entitled-opinions.com/">Entitled Opinions</a>
-<br>hosted by Robert Pogue Harrison
-<br>transcripts by <a href="https://reduct.video">Reduct</a>
+    <a href="https://entitled-opinions.com/">Entitled Opinions</a>
+    <br>hosted by Robert Pogue Harrison
+    <br>transcripts by <a href="https://reduct.video">Reduct</a>
 </p>
 
 <table>
@@ -89,10 +88,10 @@ for ts, ep in eps.items():
         seek = tss[0] * 60 * 60 + tss[1] * 60 + tss[2]
 
         episode += f"""
-        <tr>
-            <td style="width: 100px;"><a href="javascript:;" onclick="const el = document.getElementById('a'); el.currentTime = {seek}; el.play();">{m[0]}</a></td>
-            <td style="width: 500px;"><div>{text}</div></td>
-        </tr>
+<tr>
+    <td style="width: 100px;"><a href="javascript:;" onclick="const el = document.getElementById('a'); el.currentTime = {seek}; el.play();">{m[0]}</a></td>
+    <td style="width: 500px;"><div>{text}</div></td>
+</tr>
         """
 
         simple = text.encode("ascii", "ignore").decode("ascii").lower()
@@ -116,15 +115,13 @@ for ts, ep in eps.items():
 
 toc += """
 </table>
+
 <br/>
+
 <div><a href="./index2.html">transcript index</a></div>
 <div><a href="./entitled-opinions.json">episode metadata</a></div>
 <div><a href="./entitled-opinions.xml">podcast xml</a></div>
-<div>
-    <a href="./1_parse_xml.py">how</a>
-    <a href="./2_download_and_transcribe.py">it's</a>
-    <a href="./3_generate_html.py">made</a>
-</div>
+<div><a href="https://github.com/tobyshooters/entitled-opinions">how it's made</a></div>
 """
 
 with open("./index.html", "w") as f:
