@@ -1,6 +1,6 @@
 # Entitled Opinions archive
 
-Browse at [cristobal.nfshost.com/entitled-opinions]()
+Browse at [https://cristobal.nfshost.com/entitled-opinions]()
 
 
 ## How to replicate
@@ -62,4 +62,4 @@ The output can be previewed locally by running a web-server, e.g.
 `python3 -m http.server`
 
 Alternatively, it can be hosted on a web provider, e.g.
-[nearlyfreespeech.net]()
+[https://nearlyfreespeech.net]()
