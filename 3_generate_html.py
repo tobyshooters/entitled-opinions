@@ -34,9 +34,13 @@ toc = header + """
 """
 
 for ts, ep in eps.items():
-    txf = f"./episodes/{ts}/transcript-tiny.vtt"
+
+    txf = f"./episodes/{ts}/transcript-medium.vtt"
+
     if not os.path.exists(txf):
-        continue
+        txf = f"./episodes/{ts}/transcript-tiny.vtt"
+        if not os.path.exists(txf):
+            continue
 
     title = unicodedata.normalize("NFKD", ep["title"])
     txt = unicodedata.normalize("NFKD", open(txf, "r").read())
@@ -50,7 +54,7 @@ for ts, ep in eps.items():
 
     episode = header + f"""
 <div>
-    <a href="/">table of contents</a>
+    <a href="../..">table of contents</a>
 </div>
 <div style="width: 600px">
     <p>{ep['date']}</p>
@@ -124,13 +128,10 @@ with open("./index.html", "w") as f:
 
 def build_table(html, counts):
     html += """
-    <table style="font-family: monospace; font-size: 10px; white-space: nowrap; width: 200px;">
+    <table style="font-family: monospace; white-space: nowrap;">
     <tr> <th>word</th> <th>#</th> <th>episodes</th> </tr>
     """
     for word, locs in counts:
-        if word in ignored_words:
-            continue
-
         html += f"""<tr><td>{word}</td><td>{len(locs)}</td><td>"""
         for idx, loc in enumerate(locs):
             if idx < 5:
@@ -145,10 +146,12 @@ def build_table(html, counts):
 
 alphabetical = sorted(references.items(), key=lambda kv: kv[0])
 
-# merge words with same prefix
+# less words!
 merged = defaultdict(set)
 prev_word = alphabetical[0][0]
 for word, locs in alphabetical:
+    if word in ignored_words:
+        continue
     for postfix in ["s", "d", "ly", "ally", "n"]:
         if word == prev_word + postfix:
             word = prev_word
@@ -160,7 +163,12 @@ alphabetical = merged.items()
 
 by_counts = sorted(alphabetical, key=lambda kv: -len(kv[1]))
 
-search = header + """<div style="display: flex">"""
+search = header + """
+<div style="margin-bottom: 22px;">
+    <a href="../..">table of contents</a>
+</div>
+<div style="display: flex; width: 400px;">
+"""
 search = build_table(search, alphabetical)
 search = build_table(search, by_counts)
 search += "</div>"
