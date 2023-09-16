@@ -4,6 +4,7 @@ import json
 import requests
 import unicodedata
 
+wcpp = "../whisper.cpp"
 model = "medium"
 weights = "ggml-tiny.en.bin"
 
@@ -37,5 +38,4 @@ for ts, ep in eps.items():
         run(f"ffmpeg -y -i {src} -acodec pcm_s16le -ac 1 -ar 16000 {tgt}")
 
     print("Transcribing", t)
-    wcpp = "../whisper.cpp"
     run(f"{wcpp}/main -f {tgt} --model {wcpp}/models/ggml-{model}.en.bin --output-vtt --output-file {txf}")

@@ -12,8 +12,13 @@ ignored_words = open("10000-most-common-words.txt", "r").read().split("\n")
 header = """
 <head><meta charset="UTF-8"></head>
 <style> 
+    @font-face {
+        font-family: "Input Sans";
+        src: url(./InputSansNarrow-Regular.ttf);
+    }
     body {
         margin: 22px;
+        font-family: "Input Sans";
     } 
     th, td {
         padding-right: 11px;
