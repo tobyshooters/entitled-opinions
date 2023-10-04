@@ -1,5 +1,10 @@
 # Entitled Opinions archive
 
+Incredibly fun and powerful to string along a series of simple tools: parsing a
+podcast xml, downloading and reencoding the files with ffmpeg, transcribed with
+whisper-cpp, simple html written by concatenating strings in python, scp'd into
+a nearly-free speech-host.
+
 Browse at [cristobal.nfshost.com/entitled-opinions](https://cristobal.nfshost.com/entitled-opinions)
 
 
