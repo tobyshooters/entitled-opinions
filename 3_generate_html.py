@@ -56,7 +56,17 @@ for ts, ep in eps.items():
 </tr>
 """
 
+    og_title = f"{title}—Entitled Opinions {ep['date']}"
+
     episode = header + f"""
+<head>
+    <title>{og_title}</title>
+    <meta property="og:title" content="{og_title}" />
+    <meta property="og:description" content="{ep['description']}" />
+    <meta property="og:url" content="https://cristobal.nfshost.com/entitled-opinions/episodes/{ts}" />
+    <meta property="og:image" content="{ep['image']}" />
+</head>
+
 <div>
     <a href="../..">table of contents</a>
 </div>
