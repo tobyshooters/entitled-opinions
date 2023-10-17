@@ -5,8 +5,8 @@ Browse at [cristobal.nfshost.com/entitled-opinions](https://cristobal.nfshost.co
 
 ## How to replicate
 
-Download the Entitled Opinions podcast RSS feed [here](https://entitled-opinions.com/feed/podcast)
-and save it as `opinions.xml`.
+Download the Entitled Opinions podcast RSS feed and save it as `opinions.xml`.
+`curl https://entitled-opinions.com/feed/podcast > opinions.xml`
 
 `1_parse_xml.py` will extract the key information from the XML using the Python
 built-in `html.minidom` and save it as `opinions.json`.
