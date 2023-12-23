@@ -7,9 +7,6 @@ from collections import defaultdict
 
 eps = json.load(open("opinions.json", "r"))
 
-references = defaultdict(set)
-ignored_words = open("10000-most-common-words.txt", "r").read().split("\n")
-
 header = """
 <head>
     <meta charset="UTF-8">
@@ -34,8 +31,14 @@ toc = header + """
     <br>archive by <a href="https://reduct.video">Reduct</a>
 </p>
 
+<p>
+    <a href="./index2.html">index of word occurences</a></div>
+</p>
+
 <table>
 """
+
+references = defaultdict(set)
 
 for ts, ep in eps.items():
 
@@ -48,6 +51,8 @@ for ts, ep in eps.items():
 
     title = unicodedata.normalize("NFKD", ep["title"])
     txt = unicodedata.normalize("NFKD", open(txf, "r").read())
+
+    print(f"Processing {title}")
 
     toc += f"""
 <tr>
@@ -100,8 +105,16 @@ for ts, ep in eps.items():
 
         episode += f"""
 <tr>
-    <td style="width: 100px;"><a href="javascript:;" onclick="const el = document.getElementById('a'); el.currentTime = {seek}; el.play();">{m[0]}</a></td>
-    <td style="width: 500px;"><div>{text}</div></td>
+    <td id="{seek}" style="width: 100px;">
+        <a href="javascript:;" onclick="const el = document.getElementById('a'); el.currentTime = {seek}; el.play(); window.location.hash = {seek}">
+            {m[0]}
+        </a>
+    </td>
+    <td style="width: 500px;">
+        <div>
+            {text}
+        </div>
+    </td>
 </tr>
         """
 
@@ -114,7 +127,7 @@ for ts, ep in eps.items():
                     word = word[-len(suffix):]
 
             if word and len(word) > 3:
-                references[word].add(f"./episodes/{ts}")
+                references[word].add(ts)
 
     episode += """
 </table>
@@ -129,14 +142,26 @@ toc += """
 
 <br/>
 
-<div><a href="./index2.html">transcript index</a></div>
-<div><a href="./opinions.json">episode metadata</a></div>
-<div><a href="./opinions.xml">podcast xml</a></div>
-<div><a href="https://github.com/tobyshooters/entitled-opinions">how it's made</a></div>
+<div>pirated, with care and respect</div>
+<div>
+    <a href="./opinions.json">metedata</a>
+    <a href="./opinions.xml">xml</a>
+    <a href="https://github.com/tobyshooters/entitled-opinions">source code</a>
+</div>
+
 """
 
 with open("./index.html", "w") as f:
     f.write(toc)
+
+
+def chart(count, step=16, largest=200):
+    count = max(2, int(100 * count / largest))
+    bar_chunks, remainder = divmod(int(count * 8 / step), 8)
+    bar = '█' * bar_chunks
+    if remainder > 0:
+        bar += chr(ord('█') + (8 - remainder))
+    return bar
 
 
 def build_table(html, counts):
@@ -144,46 +169,80 @@ def build_table(html, counts):
     <table style="font-family: monospace; white-space: nowrap;">
     <tr> <th>word</th> <th>#</th> <th>episodes</th> </tr>
     """
-    for word, locs in counts:
-        html += f"""<tr><td>{word}</td><td>{len(locs)}</td><td>"""
-        for idx, loc in enumerate(locs):
-            if idx < 5:
-                html += f"""<a href="{loc}">[{idx + 1}]</a>"""
+
+    largest = max(len(eps) for _, eps in counts)
+
+    all_eps = set()
+    for _, word_eps in counts:
+        all_eps.update(word_eps)
+    all_eps = sorted(list(all_eps))
+
+    for word, word_eps in counts:
+        N = len(word_eps)
+        bar = chart(N, largest=largest)
+
+        html += f"""<tr><td>{word}</td><td>{bar} {N}</td><td style="font-family: sans-serif">"""
+
+        for ep in all_eps:
+            if ep in word_eps:
+                href = f"./episodes/{ep}"
+                html += f"""<a style="text-decoration: none; background-color: blue;" href="{href}">·</a>"""
             else:
-                html += "..."
-                break
+                html += "·"
+
         html += "</tr>"
     html += "</table>"
     return html
 
 
-alphabetical = sorted(references.items(), key=lambda kv: kv[0])
+print("Building index tables")
 
-# less words!
-merged = defaultdict(set)
+# prune words!
+alphabetical = sorted(references.items(), key=lambda kv: kv[0])
+ignored_words = open("10000-most-common-words.txt", "r").read().split("\n")
+
+merged = defaultdict(list)
 prev_word = alphabetical[0][0]
-for word, locs in alphabetical:
+for word, eps in alphabetical:
     if word in ignored_words:
         continue
-    for postfix in ["s", "d", "ly", "ally", "n"]:
+    for postfix in ["s", "d", "ly", "ally", "n", "ed", "ing", "r"]:
         if word == prev_word + postfix:
             word = prev_word
             break
-    else:
-        prev_word = word
-    merged[word].update(locs)
-alphabetical = merged.items()
+    merged[word].extend(eps)
+    prev_word = word
 
+alphabetical = merged.items()
 by_counts = sorted(alphabetical, key=lambda kv: -len(kv[1]))
 
 search = header + """
 <div style="margin-bottom: 22px;">
     <a href="../..">table of contents</a>
 </div>
-<div style="display: flex; width: 400px;">
+
+<div style="margin-bottom: 22px;">
+    index of word occurences
+</div>
+
+<div style="margin-bottom: 22px;">
+    <span id="counts"></span>
+    sorted by frequency</br>
+    <a href="#alphabetical">sort alphabetically</a>
+</div>
+"""
+
+search = build_table(search, by_counts)
+
+search += """
+<div style="margin: 22px 0px;">
+    <span id="alphabetical"></span>
+    sorted alphabetically</br>
+    <a href="#counts">sort by frequency</a>
+</div>
 """
 search = build_table(search, alphabetical)
-search = build_table(search, by_counts)
+
 search += "</div>"
 
 
