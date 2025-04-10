@@ -6,7 +6,7 @@ import unicodedata
 
 wcpp = "../whisper.cpp"
 model = "tiny"
-weights = "ggml-{model}.en.bin"
+weights = f"models/ggml-{model}.en.bin"
 
 def run(p):
     subprocess.run(p.split(" "))
@@ -39,4 +39,4 @@ for ts, ep in eps.items():
         run(f"ffmpeg -y -i {src} -acodec pcm_s16le -ac 1 -ar 16000 {tgt}")
 
     print("Transcribing", t)
-    run(f"{wcpp}/main -f {tgt} --model {wcpp}/models/ggml-{model}.en.bin --output-vtt --output-file {txf}")
+    run(f"{wcpp}/build/bin/whisper-cli -f {tgt} --model {wcpp}/{weights} --output-vtt --output-file {txf}")

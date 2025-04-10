@@ -15,11 +15,23 @@ header = """
 <style> 
     body {
         margin: 22px;
+        background-color: rgb(253, 252, 251);
     } 
     th, td {
         padding-right: 11px;
         text-align: left;
         vertical-align: top;
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid red;
+        cursor: pointer;
+    }
+    a:hover {
+        color: white;
+        background-color: red;
+        border: none;
     }
 </style>
 """
@@ -144,8 +156,8 @@ toc += """
 
 <div>pirated, with care and respect</div>
 <div>
-    <a href="./opinions.json">metedata</a>
-    <a href="./opinions.xml">xml</a>
+    <a href="./opinions.json">metadata</a>
+    <a href="./opinions.xml">rss feed</a>
     <a href="https://github.com/tobyshooters/entitled-opinions">source code</a>
 </div>
 
@@ -186,7 +198,7 @@ def build_table(html, counts):
         for ep in all_eps:
             if ep in word_eps:
                 href = f"./episodes/{ep}"
-                html += f"""<a style="text-decoration: none; background-color: blue;" href="{href}">·</a>"""
+                html += f"""<a style="text-decoration: none; background-color: red;" href="{href}">·</a>"""
             else:
                 html += "·"
 
